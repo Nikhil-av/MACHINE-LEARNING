@@ -21,7 +21,6 @@ grad = zeros(size(theta));
 % Hint: The computation of the cost function and gradients can be
 %       efficiently vectorized. For example, consider the computation
 %
-%           sigmoid(X * theta)
 %
 %       Each row of the resulting matrix will contain the value of the
 %       prediction for that example. You can make use of this to vectorize
@@ -38,11 +37,14 @@ grad = zeros(size(theta));
 
 
 
-J = ( (1 / m) * sum(-y'*log(sigmoid(X*theta)) - (1-y)'*log( 1 - sigmoid(X*theta))) ) + (lambda/(2*m))*sum(theta(2:length(theta)).*theta(2:length(theta))) ;
+z = X*theta;
+h = 1.0 ./ (1.0 + exp(-z));
+p=theta(2:end)'*theta(2:end);
+J = (-y' * log(h) - (1-y)' * log(1-h))/m+((lambda/(2*m))*p);
 
-grad = (1 / m) * sum( X .* repmat((sigmoid(X*theta) - y), 1, size(X,2)) );
+grad = X' * (h - y)/m+lambda*theta/m;
 
-grad(:,2:length(grad)) = grad(:,2:length(grad)) + (lambda/m)*theta(2:length(theta))';
+grad(1)-=lambda*theta(1)/m;
 
 
 
